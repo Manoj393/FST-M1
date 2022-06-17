@@ -1,72 +1,60 @@
 package sdetAPIGrpID.sdetAPIArtiID;
 
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
-
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import io.appium.java_client.AppiumDriver;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterClass;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import java.net.MalformedURLException;
+import java.net.URL;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
-public class Activity2_1 {
-    WebDriverWait wait;
-    AppiumDriver<MobileElement> driver = null;
+public class Activity1 {
+    // Declare Android driver
+    AndroidDriver<MobileElement> driver;
 
-    @BeforeTest
-    public void setup() throws MalformedURLException {
-
+    @BeforeClass
+    public void setUp() throws MalformedURLException {
         // Set the Desired Capabilities
         DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("deviceName", "<device name>");
+        caps.setCapability("deviceName", "<Your device name>");
         caps.setCapability("platformName", "Android");
-        caps.setCapability("appPackage", "com.android.chrome");
-        caps.setCapability("appActivity", "com.google.android.apps.chrome.Main");
+        caps.setCapability("automationName", "UiAutomator2");
+        caps.setCapability("appPackage", "com.android.calculator2");
+        caps.setCapability("appActivity", ".Calculator");
         caps.setCapability("noReset", true);
 
         // Instantiate Appium Driver
-        driver = new AndroidDriver<MobileElement>(new URL("http://127.0.0.1:4723/wd/hub"), caps);
-        wait = new WebDriverWait(driver, 10);
+        URL appServer = new URL("http://127.0.0.1:4723/wd/hub");
+        driver = new AndroidDriver<>(appServer, caps);
     }
 
     @Test
-    public void testSearchAppium() {
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    public void add() {
+        // Using resource-id
+        driver.findElementById("digit_5").click();
+        // Using Accessibility ID
+        driver.findElementByAccessibilityId("multiply").click();
+        // Using XPath
+        driver.findElementByXPath("//android.widget.Button[@text='9']").click();
 
-        driver.get("https://www.training-support.net/");
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        String pageTitle = driver.findElementByXPath("//android.view.View[@text='Training Support']").getText();
-        System.out.println("Title on Homepage: " + pageTitle);
+        // Perform Calculation
+        driver.findElementById("eq").click();
 
-        MobileElement aboutButton = driver.findElementByXPath("//android.view.View[@text='About Us']");
-        //     MobileElement aboutButton = driver.findElementById("about-link");
-        aboutButton.click();
+        // Display Result
+        String result = driver.findElement(MobileBy.id("result")).getText();
+        System.out.println(result);
 
-        String newPageTitle = driver
-                .findElementByXPath("//android.webkit.WebView/android.view.View/android.view.View/android.view.View[2]")
-                .getText();
-
-        System.out.println("Title on new page: " + newPageTitle);
-
-        // Assertions
-        Assert.assertEquals(pageTitle, "Training Support");
-        Assert.assertEquals(newPageTitle, "About Us");
+        // Assertion
+        Assert.assertEquals(result, "45");
     }
 
-    @AfterTest
+    @AfterClass
     public void tearDown() {
+        // Close app
         driver.quit();
     }
 }
