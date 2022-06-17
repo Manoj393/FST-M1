@@ -20,7 +20,7 @@ public class Activity1 {
     public void setUp() throws MalformedURLException {
         // Set the Desired Capabilities
         DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("deviceName", "<Your device name>");
+        caps.setCapability("deviceName", "OnePlus 7T");
         caps.setCapability("platformName", "Android");
         caps.setCapability("automationName", "UiAutomator2");
         caps.setCapability("appPackage", "com.android.calculator2");
