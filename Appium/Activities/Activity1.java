@@ -1,60 +1,50 @@
-package sdetAPIGrpID.sdetAPIArtiID;
+package activities;
 
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.AfterClass;
-import io.appium.java_client.MobileBy;
-import io.appium.java_client.MobileElement;
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class Activity1 {
-    // Declare Android driver
-    AndroidDriver<MobileElement> driver;
+    AndroidDriver driver;
 
     @BeforeClass
     public void setUp() throws MalformedURLException {
-        // Set the Desired Capabilities
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("deviceName", "OnePlus 7T");
-        caps.setCapability("platformName", "Android");
-        caps.setCapability("automationName", "UiAutomator2");
-        caps.setCapability("appPackage", "com.android.calculator2");
-        caps.setCapability("appActivity", ".Calculator");
-        caps.setCapability("noReset", true);
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setDeviceName("OnePlus 7T");
+        options.setPlatformName("android");
+        options.setAutomationName("UIAutomator2");
+        options.setAppPackage("com.sec.android.app.popupcalculator");
+        options.setAppActivity(".Calculator");
+        options.noReset();
 
-        // Instantiate Appium Driver
-        URL appServer = new URL("http://127.0.0.1:4723/wd/hub");
-        driver = new AndroidDriver<>(appServer, caps);
+        URL serviceURL = new URL("http://localhost:4723/wd/hub");
+
+        driver = new AndroidDriver(serviceURL, options);
     }
 
     @Test
-    public void add() {
-        // Using resource-id
-        driver.findElementById("digit_5").click();
-        // Using Accessibility ID
-        driver.findElementByAccessibilityId("multiply").click();
-        // Using XPath
-        driver.findElementByXPath("//android.widget.Button[@text='9']").click();
+    public void multiple(){
+        driver.findElement(AppiumBy.id("calc_keypad_btn_05")).click();
+        driver.findElement(AppiumBy.accessibilityId("Multiplication")).click();
+        driver.findElement(AppiumBy.id("calc_keypad_btn_08")).click();
+        driver.findElement(AppiumBy.id("com.sec.android.app.popupcalculator:id/calc_keypad_btn_equal")).click();
 
-        // Perform Calculation
-        driver.findElementById("eq").click();
+        String text = driver.findElement(AppiumBy.id("com.sec.android.app.popupcalculator:id/calc_edt_formula")).getText();
+        System.out.println("text is "+text);
+        Assert.assertTrue(text.equalsIgnoreCase("40"), "Result is not correct");
 
-        // Display Result
-        String result = driver.findElement(MobileBy.id("result")).getText();
-        System.out.println(result);
 
-        // Assertion
-        Assert.assertEquals(result, "45");
     }
 
     @AfterClass
-    public void tearDown() {
-        // Close app
+    public void closeBrowser(){
         driver.quit();
     }
 }
